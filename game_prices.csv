@@ -17,15 +17,15 @@ Name,Rating,NumberOfSupportedConsoles,Franchise,Price
 'Halo Infinite',7.9,2,3,60
 'Forze Horizon 5',8.2,3,3,60
 'Sea of Theives',5.7,3,3,40
-'Fortnite',5.1,2,4,290000
-'Fall Guys',6.8,2,4,340000
-'GTA 5',8.5,1,5,220000
-'Red Dead Redemption 2',8.9,3,5,380000
-'Assasins Creed Shadows',6.2,2,6,280000
-'Rainbow 6 Siege',6,3,2,6,310000
-'Far Cry 6',5.4,3,6,365000
-'Just Dance 2026 Edition',5.3,1,6,255000
-'God of War',4,2,7,325000
-'Last of Us Part 2,5,3,7,405000
-'Spider-Man',3,2,7,295000
-'Destiny 2',4,2,7,335000
+'Fortnite',5.1,5,4,0
+'Fall Guys',6.8,5,4,0
+'GTA 5',8.5,3,5,60
+'Red Dead Redemption 2',8.9,3,5,60
+'Assasins Creed Shadows',6.2,4,6,70
+'Rainbow 6 Siege',6,3,2,6,0
+'Far Cry 6',5.4,3,6,60
+'Just Dance 2026 Edition',5.3,4,6,50
+'God of War: Ragnarok',8.2,2,7,70
+'Last of Us Part 2',5.8,1,7,60
+'Spider-Man 2',8.7,2,7,70
+'Destiny 2',5.2,3,7,0
