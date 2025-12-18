@@ -1,4 +1,4 @@
-Rating,NumberOfSupportedConsoles,Franchise,Price,Name
+Rating,NumberOfSupportedConsoles,Franchise,Company,Name
 8.7,5,1,10, 'Plants VS Zombies'
 7.8,4,1,5, 'Peggle'
 4.4,4,1,0, 'The Sims 4'
