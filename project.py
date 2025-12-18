@@ -32,7 +32,7 @@ def load_and_explore_data(filename):
     """
     data = pd.read_csv(filename)
     
-    print("=== Car Price Data ===")
+    print("=== Game Price Data ===")
     print(f"\nFirst 5 rows:")
     print(data.head())
     
@@ -57,24 +57,24 @@ def visualize_features(data):
     fig.suptitle('Car Features vs Price', fontsize=16, fontweight='bold')
     
     # Plot 1: Mileage vs Price
-    axes[0, 0].scatter(data['Mileage'], data['Price'], color='blue', alpha=0.6)
-    axes[0, 0].set_xlabel('Mileage (1000s of miles)')
+    axes[0, 0].scatter(data['Rating'], data['Price'], color='blue', alpha=0.6)
+    axes[0, 0].set_xlabel('Rating (from Metacritic)')
     axes[0, 0].set_ylabel('Price ($)')
-    axes[0, 0].set_title('Mileage vs Price')
+    axes[0, 0].set_title('Rating vs Price')
     axes[0, 0].grid(True, alpha=0.3)
     
     # Plot 2: Age vs Price
-    axes[0, 1].scatter(data['Age'], data['Price'], color='green', alpha=0.6)
-    axes[0, 1].set_xlabel('Age (years)')
+    axes[0, 1].scatter(data['NumberOfSupportedConsoles'], data['Price'], color='green', alpha=0.6)
+    axes[0, 1].set_xlabel('Accesibility (consoles)')
     axes[0, 1].set_ylabel('Price ($)')
-    axes[0, 1].set_title('Age vs Price')
+    axes[0, 1].set_title('Accesibility vs Price')
     axes[0, 1].grid(True, alpha=0.3)
     
     # Plot 3: Brand vs Price
-    axes[1, 0].scatter(data['Brand'], data['Price'], color='red', alpha=0.6)
-    axes[1, 0].set_xlabel('Brand (0=Toyota, 1=Honda, 2=Ford)')
+    axes[1, 0].scatter(data['Company'], data['Price'], color='red', alpha=0.6)
+    axes[1, 0].set_xlabel('Brand (1=EA, 2=, 3=Microsoft, 4=Epic Games, 5=Rockstar Games, 6=Ubisoft, 7=Sony)')
     axes[1, 0].set_ylabel('Price ($)')
-    axes[1, 0].set_title('Brand vs Price')
+    axes[1, 0].set_title('Company vs Price')
     axes[1, 0].grid(True, alpha=0.3)
     
     # Plot 4: Leave empty for now (or add another feature later)
@@ -83,8 +83,8 @@ def visualize_features(data):
     axes[1, 1].axis('off')
     
     plt.tight_layout()
-    plt.savefig('car_features.png', dpi=300, bbox_inches='tight')
-    print("\n✓ Feature plots saved as 'car_features.png'")
+    plt.savefig('game_features.png', dpi=300, bbox_inches='tight')
+    print("\n✓ Feature plots saved as 'game_features.png'")
     plt.show()
 
 
@@ -100,7 +100,7 @@ def prepare_features(data):
         y - Series with target column
     """
     # Select multiple feature columns
-    feature_columns = ['Mileage', 'Age', 'Brand']
+    feature_columns = ['Rating', 'NumberOfSupportedConsoles', 'Company']
     X = data[feature_columns]
     y = data['Price']
     
@@ -117,7 +117,7 @@ def split_data(X, y):
     Split data into train/test 
     
     NOTE: We're splitting differently than usual to match our unplugged activity!
-    First 15 cars = training, Last 3 cars = testing (just like you did manually)
+    First 28 games = training, Last 3 games = testing (just like you did manually)
     
     Also NOTE: We're NOT scaling features in this example so the coefficients
     are easy to interpret and compare to your manual equation!
@@ -131,10 +131,10 @@ def split_data(X, y):
     """
     # Split to match unplugged activity: first 15 for training, last 3 for testing
     # Note: For assignment, you should be using the train_test_split function
-    X_train = X.iloc[:15]  # First 15 rows
-    X_test = X.iloc[15:]   # Remaining rows (should be 3)
-    y_train = y.iloc[:15]
-    y_test = y.iloc[15:]
+    X_train = X.iloc[:27]  # First 15 rows
+    X_test = X.iloc[27:]   # Remaining rows (should be 3)
+    y_train = y.iloc[:27]
+    y_test = y.iloc[27:]
     
     print(f"\n=== Data Split (Matching Unplugged Activity) ===")
     print(f"Training set: {len(X_train)} samples (first 15 cars)")
@@ -236,28 +236,28 @@ def compare_predictions(y_test, predictions, num_examples=5):
         
         print(f"${actual:>13.2f}   ${predicted:>13.2f}   ${error:>10.2f}   {pct_error:>6.2f}%")
 
-def make_prediction(model, mileage, age, brand):
+def make_prediction(model, rating, devices, company):
     """
-    Make a prediction for a specific car
+    Make a prediction for a specific game
     
     Args:
         model: trained LinearRegression model
-        mileage: mileage value (in thousands)
-        age: age in years
-        brand: brand code (0=Toyota, 1=Honda, 2=Ford)
+        rating: average rating of the game on Meta Critic
+        devices: number of supported devices
+        brand: brand code (0=EA, 1=Nintendo, 2=Microsoft, 3=Epic Games, 4=Rockstar Games, 5=Ubisoft, 6=Sony )
     
     Returns:
         predicted price
     """
     # Create input array in the correct order: [Mileage, Age, Brand]
-    car_features = pd.DataFrame([[mileage, age, brand]], 
-                                 columns=['Mileage', 'Age', 'Brand'])
-    predicted_price = model.predict(car_features)[0]
+    game_features = pd.DataFrame([[rating, devices, company]], 
+                                 columns=['Rating', 'NumberOfSupportedDevices', 'Company'])
+    predicted_price = model.predict(game_features)[0]
     
-    brand_name = ['Toyota', 'Honda', 'Ford'][brand]
+    company_name = ['EA', 'Nintendo', 'Microsoft','Epic Games','Rockstar Games','Ubisoft','Sony'][company]
     
     print(f"\n=== New Prediction ===")
-    print(f"Car specs: {mileage:.0f}k miles, {age} years old, {brand_name}")
+    print(f"Game specs: Rating of{rating:.0f}, is supported by {devices} device(s), and owned by {company_name}")
     print(f"Predicted price: ${predicted_price:,.2f}")
     
     return predicted_price
@@ -266,11 +266,11 @@ def make_prediction(model, mileage, age, brand):
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("CAR PRICE PREDICTION - MULTIVARIABLE LINEAR REGRESSION")
+    print("GAME PRICE PREDICTION - MULTIVARIABLE LINEAR REGRESSION")
     print("=" * 70)
     
     # Step 1: Load and explore
-    data = load_and_explore_data('car_prices.csv')
+    data = load_and_explore_data('game_prices.csv')
     
     # Step 2: Visualize all features
     visualize_features(data)
@@ -296,12 +296,12 @@ if __name__ == "__main__":
     print("\n" + "=" * 70)
     print("✓ Example complete! Check out the saved plots.")
     print("=" * 70)
-    - Identify which features look most important
+    # - Identify which features look most important
     
-    Args:
-        data: your DataFrame
-        feature_columns: list of feature column names
-        target_column: name of target column
+    # Args:
+    #     data: your DataFrame
+    #     feature_columns: list of feature column names
+    #     target_column: name of target column
     """
     print("\n" + "=" * 70)
     print("VISUALIZING RELATIONSHIPS")
@@ -311,7 +311,7 @@ if __name__ == "__main__":
     # Hint: Use subplots like in Part 2!
     
     pass
-
+"""
 
 def prepare_and_split_data(data):
     """
@@ -419,10 +419,10 @@ def make_prediction(model):
 
 if __name__ == "__main__":
     # Step 1: Load and explore
-    data = load_and_explore_data(DATA_FILE)
+    data = load_and_explore_data(game_prices.csv)
     
     # Step 2: Visualize
-    visualize_data(data)
+    visualize_features(data)
     
     # Step 3: Prepare and split
     X_train, X_test, y_train, y_test = prepare_and_split_data(data)
@@ -445,3 +445,4 @@ if __name__ == "__main__":
     print("3. Create your presentation")
     print("4. Practice presenting with your group!")
 
+car_prices.csv
