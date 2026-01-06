@@ -18,11 +18,11 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
-
+DATA = 'game_prices.csv'
 
 def load_and_explore_data(filename):
     """
-    Load the car price data and explore it
+    Load the game price data and explore it
     
     Args:
         filename: name of the CSV file to load
@@ -54,31 +54,31 @@ def visualize_features(data):
         data: pandas DataFrame with features and Price
     """
     fig, axes = plt.subplots(2, 2, figsize=(12, 10))
-    fig.suptitle('Car Features vs Price', fontsize=16, fontweight='bold')
+    fig.suptitle('Game Features vs Price', fontsize=16, fontweight='bold')
     
     # Plot 1: Mileage vs Price
-    axes[0, 0].scatter(data['Rating'], data['Price'], color='blue', alpha=0.6)
-    axes[0, 0].set_xlabel('Rating (from Metacritic)')
-    axes[0, 0].set_ylabel('Price ($)')
-    axes[0, 0].set_title('Rating vs Price')
+    axes[0, 0].scatter(data['Price'], data['Rating'], color='blue', alpha=0.6)
+    axes[0, 0].set_xlabel('Price ($)')
+    axes[0, 0].set_ylabel('Rating (from Metacritic.com)')
+    axes[0, 0].set_title('Price vs Rating')
     axes[0, 0].grid(True, alpha=0.3)
     
     # Plot 2: Age vs Price
-    axes[0, 1].scatter(data['NumberOfSupportedConsoles'], data['Price'], color='green', alpha=0.6)
-    axes[0, 1].set_xlabel('Accesibility (consoles)')
-    axes[0, 1].set_ylabel('Price ($)')
-    axes[0, 1].set_title('Accesibility vs Price')
+    axes[0, 1].scatter(data['NumberOfSupportedDevices'], data['Rating'], color='green', alpha=0.6)
+    axes[0, 1].set_xlabel('Accesibility (# of devices)')
+    axes[0, 1].set_ylabel('Rating (from Metacritic.com)')
+    axes[0, 1].set_title('Accesibility vs Rating')
     axes[0, 1].grid(True, alpha=0.3)
     
     # Plot 3: Brand vs Price
-    axes[1, 0].scatter(data['Company'], data['Price'], color='red', alpha=0.6)
-    axes[1, 0].set_xlabel('Brand (1=EA, 2=, 3=Microsoft, 4=Epic Games, 5=Rockstar Games, 6=Ubisoft, 7=Sony)')
-    axes[1, 0].set_ylabel('Price ($)')
-    axes[1, 0].set_title('Company vs Price')
+    axes[1, 0].scatter(data['Company'], data['Rating'], color='red', alpha=0.6)
+    axes[1, 0].set_xlabel('Rating (from Metacritic.com)')
+    axes[1, 0].set_ylabel('Owning Company (Check Company Key')
+    axes[1, 0].set_title('Rating vs Company')
     axes[1, 0].grid(True, alpha=0.3)
     
     # Plot 4: Leave empty for now (or add another feature later)
-    axes[1, 1].text(0.5, 0.5, 'Space for additional features', 
+    axes[1, 1].text(0.5, 0.5, 'Company Key - 0=EA, 1=Nintendo, 2=Microsoft, 3=Epic Games, 4=Rockstar Games, 5=Ubisoft, 6=Sony', 
                     ha='center', va='center', fontsize=12)
     axes[1, 1].axis('off')
     
@@ -100,9 +100,9 @@ def prepare_features(data):
         y - Series with target column
     """
     # Select multiple feature columns
-    feature_columns = ['Rating', 'NumberOfSupportedConsoles', 'Company']
+    feature_columns = ['Price', 'NumberOfSupportedDevices', 'Company']
     X = data[feature_columns]
-    y = data['Price']
+    y = data['Rating']
     
     print(f"\n=== Feature Preparation ===")
     print(f"Features (X) shape: {X.shape}")
@@ -137,8 +137,8 @@ def split_data(X, y):
     y_test = y.iloc[27:]
     
     print(f"\n=== Data Split (Matching Unplugged Activity) ===")
-    print(f"Training set: {len(X_train)} samples (first 15 cars)")
-    print(f"Testing set: {len(X_test)} samples (last 3 cars - your holdout set!)")
+    print(f"Training set: {len(X_train)} samples (first 15 games)")
+    print(f"Testing set: {len(X_test)} samples (last 3 games - your holdout set!)")
     print(f"\nNOTE: We're NOT scaling features here so coefficients are easy to interpret!")
     
     return X_train, X_test, y_train, y_test
@@ -160,13 +160,13 @@ def train_model(X_train, y_train, feature_names):
     model.fit(X_train, y_train)
     
     print(f"\n=== Model Training Complete ===")
-    print(f"Intercept: ${model.intercept_:.2f}")
+    print(f"Intercept: {model.intercept_:.2f} points")
     print(f"\nCoefficients:")
     for name, coef in zip(feature_names, model.coef_):
         print(f"  {name}: {coef:.2f}")
     
     print(f"\nEquation:")
-    equation = f"Price = "
+    equation = f"Rating = "
     for i, (name, coef) in enumerate(zip(feature_names, model.coef_)):
         if i == 0:
             equation += f"{coef:.2f} × {name}"
@@ -199,10 +199,10 @@ def evaluate_model(model, X_test, y_test, feature_names):
     
     print(f"\n=== Model Performance ===")
     print(f"R² Score: {r2:.4f}")
-    print(f"  → Model explains {r2*100:.2f}% of price variation")
+    print(f"  → Model explains {r2*100:.2f}% of rating variation")
     
     print(f"\nRoot Mean Squared Error: ${rmse:.2f}")
-    print(f"  → On average, predictions are off by ${rmse:.2f}")
+    print(f"  → On average, predictions are off by {rmse:.2f} points")
     
     # Feature importance (absolute value of coefficients)
     print(f"\n=== Feature Importance ===")
@@ -215,20 +215,20 @@ def evaluate_model(model, X_test, y_test, feature_names):
     return predictions
 
 
-def compare_predictions(y_test, predictions, num_examples=5):
+def compare_predictions(y_test, predictions):
     """
-    Show side-by-side comparison of actual vs predicted prices
+    Show side-by-side comparison of actual vs predicted ratings
     
     Args:
-        y_test: actual prices
-        predictions: predicted prices
+        y_test: actual ratings
+        predictions: predicted rating
         num_examples: number of examples to show
     """
     print(f"\n=== Prediction Examples ===")
-    print(f"{'Actual Price':<15} {'Predicted Price':<18} {'Error':<12} {'% Error'}")
+    print(f"{'Actual Rating':<15} {'Predicted Rating':<18} {'Error':<12} {'% Error'}")
     print("-" * 60)
     
-    for i in range(min(num_examples, len(y_test))):
+    for i in range(min(5, len(y_test))):
         actual = y_test.iloc[i]
         predicted = predictions[i]
         error = actual - predicted
@@ -236,7 +236,7 @@ def compare_predictions(y_test, predictions, num_examples=5):
         
         print(f"${actual:>13.2f}   ${predicted:>13.2f}   ${error:>10.2f}   {pct_error:>6.2f}%")
 
-def make_prediction(model, rating, devices, company):
+def make_prediction(model, price, devices, company):
     """
     Make a prediction for a specific game
     
@@ -250,17 +250,17 @@ def make_prediction(model, rating, devices, company):
         predicted price
     """
     # Create input array in the correct order: [Mileage, Age, Brand]
-    game_features = pd.DataFrame([[rating, devices, company]], 
-                                 columns=['Rating', 'NumberOfSupportedDevices', 'Company'])
-    predicted_price = model.predict(game_features)[0]
+    game_features = pd.DataFrame([[price, devices, company]], 
+                                 columns=['Price', 'NumberOfSupportedDevices', 'Company'])
+    predicted_rating = model.predict(game_features)[0]
     
     company_name = ['EA', 'Nintendo', 'Microsoft','Epic Games','Rockstar Games','Ubisoft','Sony'][company]
     
     print(f"\n=== New Prediction ===")
-    print(f"Game specs: Rating of{rating:.0f}, is supported by {devices} device(s), and owned by {company_name}")
-    print(f"Predicted price: ${predicted_price:,.2f}")
+    print(f"Game specs: Costs {price:.0f}, is supported by {devices} # of device(s), and owned by {company_name}")
+    print(f"Predicted price: ${predicted_rating:,.2f}")
     
-    return predicted_price
+    return predicted_rating
 
 
 
@@ -270,7 +270,7 @@ if __name__ == "__main__":
     print("=" * 70)
     
     # Step 1: Load and explore
-    data = load_and_explore_data('game_prices.csv')
+    data = load_and_explore_data(DATA)
     
     # Step 2: Visualize all features
     visualize_features(data)
@@ -412,7 +412,7 @@ def make_prediction(model):
     
     # Your code here
     # Example: If predicting house price with [sqft, bedrooms, bathrooms]
-    # sample = pd.DataFrame([[2000, 3, 2]], columns=feature_names)
+    # a = pd.DataFrame([[, 3, 2]], columns=feature_names)
     
     pass
 
@@ -444,5 +444,3 @@ if __name__ == "__main__":
     print("2. Try improving your model (add/remove features)")
     print("3. Create your presentation")
     print("4. Practice presenting with your group!")
-
-car_prices.csv
