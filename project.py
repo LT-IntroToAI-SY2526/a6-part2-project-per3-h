@@ -73,16 +73,12 @@ def visualize_features(data):
     # Plot 3: Brand vs Price
     axes[1, 0].scatter(data['Company'], data['Rating'], color='red', alpha=0.6)
     axes[1, 0].set_xlabel('Rating (from Metacritic.com)')
-<<<<<<< HEAD
-    axes[1, 0].set_ylabel('Owning Company (Check Company Key')
-=======
-    axes[1, 0].set_ylabel('Owning Company (Check Company K')
->>>>>>> 1a3957d5bdab75ced73f654ee57925da0d2195e0
+    axes[1, 0].set_ylabel('Owning Company (Check Company Key)')
     axes[1, 0].set_title('Rating vs Company')
     axes[1, 0].grid(True, alpha=0.3)
     
     # Plot 4: Leave empty for now (or add another feature later)
-    axes[1, 1].text(0.5, 0.5, 'Company Key - 0=EA, 1=Nintendo, 2=Microsoft, 3=Epic Games, 4=Rockstar Games, 5=Ubisoft, 6=Sony', 
+    axes[1, 1].text(0.5, 0.5, 'Company Key - 0=EA, 1=Nintendo, 2=Microsoft, 3=Epic Games,\n 4=Rockstar Games, 5=Ubisoft, 6=Sony', 
                     ha='center', va='center', fontsize=12)
     axes[1, 1].axis('off')
     
@@ -238,7 +234,7 @@ def compare_predictions(y_test, predictions):
         error = actual - predicted
         pct_error = (abs(error) / actual) * 100
         
-        print(f"${actual:>13.2f}   ${predicted:>13.2f}   ${error:>10.2f}   {pct_error:>6.2f}%")
+        print(f"{actual:>13.2f}   {predicted:>13.2f}   {error:>10.2f}   {pct_error:>6.2f}%")
 
 def make_prediction(model, price, devices, company):
     """
