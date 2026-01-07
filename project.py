@@ -73,7 +73,11 @@ def visualize_features(data):
     # Plot 3: Brand vs Price
     axes[1, 0].scatter(data['Company'], data['Rating'], color='red', alpha=0.6)
     axes[1, 0].set_xlabel('Rating (from Metacritic.com)')
+<<<<<<< HEAD
     axes[1, 0].set_ylabel('Owning Company (Check Company Key')
+=======
+    axes[1, 0].set_ylabel('Owning Company (Check Company K')
+>>>>>>> 1a3957d5bdab75ced73f654ee57925da0d2195e0
     axes[1, 0].set_title('Rating vs Company')
     axes[1, 0].grid(True, alpha=0.3)
     
